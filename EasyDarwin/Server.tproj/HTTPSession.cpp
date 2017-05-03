@@ -92,7 +92,7 @@ SInt64 HTTPSession::Run()
 
 	if (events & Task::kTimeoutEvent)
 	{
-		// Session³¬Ê±,ÊÍ·ÅSession 
+		// Sessionè¶…æ—¶,é‡Šæ”¾Session 
 		return -1;
 	}
 
@@ -104,8 +104,8 @@ SInt64 HTTPSession::Run()
 			{
 				if ((err = fInputStream.ReadRequest()) == QTSS_NoErr)
 				{
-					//Èç¹ûRequestStream·µ»ØQTSS_NoErr£¬¾Í±íÊ¾ÒÑ¾­¶ÁÈ¡ÁËÄ¿Ç°Ëùµ½´ïµÄÍøÂçÊı¾İ
-					//µ«£¬»¹²»ÄÜ¹¹³ÉÒ»¸öÕûÌå±¨ÎÄ£¬»¹Òª¼ÌĞøµÈ´ı¶ÁÈ¡...
+					//å¦‚æœRequestStreamè¿”å›QTSS_NoErrï¼Œå°±è¡¨ç¤ºå·²ç»è¯»å–äº†ç›®å‰æ‰€åˆ°è¾¾çš„ç½‘ç»œæ•°æ®
+					//ä½†ï¼Œè¿˜ä¸èƒ½æ„æˆä¸€ä¸ªæ•´ä½“æŠ¥æ–‡ï¼Œè¿˜è¦ç»§ç»­ç­‰å¾…è¯»å–...
 					fInputSocketP->RequestEvent(EV_RE);
 					return 0;
 				}
@@ -124,14 +124,14 @@ SInt64 HTTPSession::Run()
 					fState = kHaveCompleteMessage;
 			}
 			continue;
-		case kReadingRequest://¶ÁÈ¡ÇëÇó±¨ÎÄ
+		case kReadingRequest://è¯»å–è¯·æ±‚æŠ¥æ–‡
 			{
 				OSMutexLocker readMutexLocker(&fReadMutex);
 
 				if ((err = fInputStream.ReadRequest()) == QTSS_NoErr)
 				{
-					//Èç¹ûRequestStream·µ»ØQTSS_NoErr£¬¾Í±íÊ¾ÒÑ¾­¶ÁÈ¡ÁËÄ¿Ç°Ëùµ½´ïµÄÍøÂçÊı¾İ
-					//µ«£¬»¹²»ÄÜ¹¹³ÉÒ»¸öÕûÌå±¨ÎÄ£¬»¹Òª¼ÌĞøµÈ´ı¶ÁÈ¡...
+					//å¦‚æœRequestStreamè¿”å›QTSS_NoErrï¼Œå°±è¡¨ç¤ºå·²ç»è¯»å–äº†ç›®å‰æ‰€åˆ°è¾¾çš„ç½‘ç»œæ•°æ®
+					//ä½†ï¼Œè¿˜ä¸èƒ½æ„æˆä¸€ä¸ªæ•´ä½“æŠ¥æ–‡ï¼Œè¿˜è¦ç»§ç»­ç­‰å¾…è¯»å–...
 					fInputSocketP->RequestEvent(EV_RE);
 					return 0;
 				}
@@ -161,15 +161,15 @@ SInt64 HTTPSession::Run()
 				}
 				fState = kHaveCompleteMessage;
 			}
-		case kHaveCompleteMessage://¶ÁÈ¡µ½ÍêÕûµÄÇëÇó±¨ÎÄ
+		case kHaveCompleteMessage://è¯»å–åˆ°å®Œæ•´çš„è¯·æ±‚æŠ¥æ–‡
 			{
 				Assert(fInputStream.GetRequestBuffer());
 
 				Assert(fRequest == nullptr);
 				fRequest = new HTTPRequest(&QTSServerInterface::GetServerHeader(), fInputStream.GetRequestBuffer());
 
-				//ÔÚÕâÀï£¬ÎÒÃÇÒÑ¾­¶ÁÈ¡ÁËÒ»¸öÍêÕûµÄRequest£¬²¢×¼±¸½øĞĞÇëÇóµÄ´¦Àí£¬Ö±µ½ÏìÓ¦±¨ÎÄ·¢³ö
-				//ÔÚ´Ë¹ı³ÌÖĞ£¬´ËSessionµÄSocket²»½øĞĞÈÎºÎÍøÂçÊı¾İµÄ¶Á/Ğ´£»
+				//åœ¨è¿™é‡Œï¼Œæˆ‘ä»¬å·²ç»è¯»å–äº†ä¸€ä¸ªå®Œæ•´çš„Requestï¼Œå¹¶å‡†å¤‡è¿›è¡Œè¯·æ±‚çš„å¤„ç†ï¼Œç›´åˆ°å“åº”æŠ¥æ–‡å‘å‡º
+				//åœ¨æ­¤è¿‡ç¨‹ä¸­ï¼Œæ­¤Sessionçš„Socketä¸è¿›è¡Œä»»ä½•ç½‘ç»œæ•°æ®çš„è¯»/å†™ï¼›
 				fReadMutex.Lock();
 				fSessionMutex.Lock();
 
@@ -177,7 +177,7 @@ SInt64 HTTPSession::Run()
 
 				if (err == E2BIG)
 				{
-					//·µ»ØHTTP±¨ÎÄ£¬´íÎóÂë408
+					//è¿”å›HTTPæŠ¥æ–‡ï¼Œé”™è¯¯ç 408
 					//(void)QTSSModuleUtils::SendErrorResponse(fRequest, qtssClientBadRequest, qtssMsgRequestTooLong);
 					fState = kSendingResponse;
 					break;
@@ -185,7 +185,7 @@ SInt64 HTTPSession::Run()
 				// Check for a corrupt base64 error, return an error
 				if (err == QTSS_BadArgument)
 				{
-					//·µ»ØHTTP±¨ÎÄ£¬´íÎóÂë408
+					//è¿”å›HTTPæŠ¥æ–‡ï¼Œé”™è¯¯ç 408
 					//(void)QTSSModuleUtils::SendErrorResponse(fRequest, qtssClientBadRequest, qtssMsgBadBase64);
 					fState = kSendingResponse;
 					break;
@@ -197,23 +197,23 @@ SInt64 HTTPSession::Run()
 
 		case kFilteringRequest:
 			{
-				//Ë¢ĞÂSession±£»îÊ±¼ä
+				//åˆ·æ–°Sessionä¿æ´»æ—¶é—´
 				fTimeoutTask.RefreshTimeout();
 
-				//¶ÔÇëÇó±¨ÎÄ½øĞĞ½âÎö
+				//å¯¹è¯·æ±‚æŠ¥æ–‡è¿›è¡Œè§£æ
 				QTSS_Error theErr = SetupRequest();
-				//µ±SetupRequest²½ÖèÎ´¶ÁÈ¡µ½ÍêÕûµÄÍøÂç±¨ÎÄ£¬ĞèÒª½øĞĞµÈ´ı
+				//å½“SetupRequestæ­¥éª¤æœªè¯»å–åˆ°å®Œæ•´çš„ç½‘ç»œæŠ¥æ–‡ï¼Œéœ€è¦è¿›è¡Œç­‰å¾…
 				if (theErr == QTSS_WouldBlock)
 				{
 					this->ForceSameThread();
 					fInputSocketP->RequestEvent(EV_RE);
 					// We are holding mutexes, so we need to force
 					// the same thread to be used for next Run()
-					return 0;//·µ»Ø0±íÊ¾ÓĞÊÂ¼ş²Å½øĞĞÍ¨Öª£¬·µ»Ø>0±íÊ¾¹æ¶¨ÊÂ¼şºóµ÷ÓÃRun
+					return 0;//è¿”å›0è¡¨ç¤ºæœ‰äº‹ä»¶æ‰è¿›è¡Œé€šçŸ¥ï¼Œè¿”å›>0è¡¨ç¤ºè§„å®šäº‹ä»¶åè°ƒç”¨Run
 
 				}
 
-				//Ã¿Ò»²½¶¼¼ì²âÏìÓ¦±¨ÎÄÊÇ·ñÒÑÍê³É£¬Íê³ÉÔòÖ±½Ó½øĞĞ»Ø¸´ÏìÓ¦
+				//æ¯ä¸€æ­¥éƒ½æ£€æµ‹å“åº”æŠ¥æ–‡æ˜¯å¦å·²å®Œæˆï¼Œå®Œæˆåˆ™ç›´æ¥è¿›è¡Œå›å¤å“åº”
 				if (fOutputStream.GetBytesWritten() > 0)
 				{
 					fState = kSendingResponse;
@@ -226,8 +226,8 @@ SInt64 HTTPSession::Run()
 
 		case kPreprocessingRequest:
 			{
-				//ÇëÇóÔ¤´¦Àí¹ı³Ì
-				//TODO:±¨ÎÄ´¦Àí¹ı³Ì
+				//è¯·æ±‚é¢„å¤„ç†è¿‡ç¨‹
+				//TODO:æŠ¥æ–‡å¤„ç†è¿‡ç¨‹
 				fState = kCleaningUp;
 				break;
 			}
@@ -236,7 +236,7 @@ SInt64 HTTPSession::Run()
 			{
 				if (fOutputStream.GetBytesWritten() == 0)
 				{
-					// ÏìÓ¦±¨ÎÄ»¹Ã»ÓĞĞÎ³É
+					// å“åº”æŠ¥æ–‡è¿˜æ²¡æœ‰å½¢æˆ
 					//QTSSModuleUtils::SendErrorResponse(fRequest, qtssServerInternal, qtssMsgNoModuleForRequest);
 					fState = kCleaningUp;
 					break;
@@ -246,17 +246,17 @@ SInt64 HTTPSession::Run()
 			}
 		case kSendingResponse:
 			{
-				//ÏìÓ¦±¨ÎÄ·¢ËÍ£¬È·±£ÍêÈ«·¢ËÍ
+				//å“åº”æŠ¥æ–‡å‘é€ï¼Œç¡®ä¿å®Œå…¨å‘é€
 				Assert(fRequest != nullptr);
 
-				//·¢ËÍÏìÓ¦±¨ÎÄ
+				//å‘é€å“åº”æŠ¥æ–‡
 				err = fOutputStream.Flush();
 
 				if (err == EAGAIN)
 				{
 					// If we get this error, we are currently flow-controlled and should
 					// wait for the socket to become writeable again
-					//Èç¹ûÊÕµ½Socket EAGAIN´íÎó£¬ÄÇÃ´ÎÒÃÇĞèÒªµÈSocketÔÙ´Î¿ÉĞ´µÄÊ±ºòÔÙµ÷ÓÃ·¢ËÍ
+					//å¦‚æœæ”¶åˆ°Socket EAGAINé”™è¯¯ï¼Œé‚£ä¹ˆæˆ‘ä»¬éœ€è¦ç­‰Socketå†æ¬¡å¯å†™çš„æ—¶å€™å†è°ƒç”¨å‘é€
 					fSocket.RequestEvent(EV_WR);
 					this->ForceSameThread();
 					// We are holding mutexes, so we need to force
@@ -290,7 +290,7 @@ SInt64 HTTPSession::Run()
 					}
 				}
 
-				//Ò»´ÎÇëÇóµÄ¶ÁÈ¡¡¢´¦Àí¡¢ÏìÓ¦¹ı³ÌÍêÕû£¬µÈ´ıÏÂÒ»´ÎÍøÂç±¨ÎÄ£¡
+				//ä¸€æ¬¡è¯·æ±‚çš„è¯»å–ã€å¤„ç†ã€å“åº”è¿‡ç¨‹å®Œæ•´ï¼Œç­‰å¾…ä¸‹ä¸€æ¬¡ç½‘ç»œæŠ¥æ–‡ï¼
 				this->CleanupRequest();
 				fState = kReadingRequest;
 			}
@@ -298,14 +298,14 @@ SInt64 HTTPSession::Run()
 		}
 	}
 
-	//Çå¿ÕSessionÕ¼ÓÃµÄËùÓĞ×ÊÔ´
+	//æ¸…ç©ºSessionå ç”¨çš„æ‰€æœ‰èµ„æº
 	this->CleanupRequest();
 
-	//SessionÒıÓÃÊıÎª0£¬·µ»Ø-1ºó£¬ÏµÍ³»á½«´ËSessionÉ¾³ı
+	//Sessionå¼•ç”¨æ•°ä¸º0ï¼Œè¿”å›-1åï¼Œç³»ç»Ÿä¼šå°†æ­¤Sessionåˆ é™¤
 	if (fObjectHolders == 0)
 		return -1;
 
-	//Èç¹ûÁ÷³Ì×ßµ½ÕâÀï£¬SessionÊµ¼ÊÒÑ¾­ÎŞĞ§ÁË£¬Ó¦¸Ã±»É¾³ı£¬µ«Ã»ÓĞ£¬ÒòÎª»¹ÓĞÆäËûµØ·½ÒıÓÃÁËSession¶ÔÏó
+	//å¦‚æœæµç¨‹èµ°åˆ°è¿™é‡Œï¼ŒSessionå®é™…å·²ç»æ— æ•ˆäº†ï¼Œåº”è¯¥è¢«åˆ é™¤ï¼Œä½†æ²¡æœ‰ï¼Œå› ä¸ºè¿˜æœ‰å…¶ä»–åœ°æ–¹å¼•ç”¨äº†Sessionå¯¹è±¡
 	return 0;
 }
 
@@ -333,7 +333,7 @@ QTSS_Error HTTPSession::SendHTTPPacket(StrPtrLen* contentXML, bool connectionClo
 		pOutputStream->Flush();
 	}
 
-	//½«¶ÔHTTPSessionµÄÒıÓÃ¼õÉÙÒ»
+	//å°†å¯¹HTTPSessionçš„å¼•ç”¨å‡å°‘ä¸€
 	if (fObjectHolders && decrement)
 		DecrementObjectHolderCount();
 
@@ -345,7 +345,7 @@ QTSS_Error HTTPSession::SendHTTPPacket(StrPtrLen* contentXML, bool connectionClo
 
 QTSS_Error HTTPSession::SetupRequest()
 {
-	//½âÎöÇëÇó±¨ÎÄ
+	//è§£æè¯·æ±‚æŠ¥æ–‡
 	QTSS_Error theErr = fRequest->Parse();
 	if (theErr != QTSS_NoErr)
 		return QTSS_BadArgument;
@@ -419,9 +419,9 @@ QTSS_Error HTTPSession::SetupRequest()
 		}
 	}
 
-	//»ñÈ¡¾ßÌåContent jsonÊı¾İ²¿·Ö
+	//è·å–å…·ä½“Content jsonæ•°æ®éƒ¨åˆ†
 
-	//1¡¢»ñÈ¡json²¿·Ö³¤¶È
+	//1ã€è·å–jsonéƒ¨åˆ†é•¿åº¦
 	StrPtrLen* lengthPtr = fRequest->GetHeaderValue(httpContentLengthHeader);
 	StringParser theContentLenParser(lengthPtr);
 	theContentLenParser.ConsumeWhitespace();
@@ -487,7 +487,7 @@ QTSS_Error HTTPSession::SetupRequest()
 
 		OSCharArrayDeleter charArrayPathDeleter(theRequestBody);
 
-		////±¨ÎÄ´¦Àí£¬²»½øÈë¶ÓÁĞ
+		////æŠ¥æ–‡å¤„ç†ï¼Œä¸è¿›å…¥é˜Ÿåˆ—
 		//EasyDarwin::Protocol::EasyProtocol protocol(theRequestBody);
 		//int nNetMsg = protocol.GetMessageType();
 
@@ -578,12 +578,12 @@ QTSS_Error HTTPSession::execNetMsgCSGetRTSPLiveSessionsRESTful(const char* query
 
 	do
 	{
-		// »ñÈ¡ÏìÓ¦Content
+		// è·å–å“åº”Content
 		char* msgContent = static_cast<char*>(Easy_GetRTSPPushSessions());
 
 		StrPtrLen msgJson(msgContent);
 
-		// ¹¹ÔìÏìÓ¦±¨ÎÄ(HTTPÍ·)
+		// æ„é€ å“åº”æŠ¥æ–‡(HTTPå¤´)
 		HTTPRequest httpAck(&QTSServerInterface::GetServerHeader(), httpResponseType);
 		httpAck.CreateResponseHeader(msgJson.Len ? httpOK : httpNotImplemented);
 		if (msgJson.Len)
@@ -595,7 +595,7 @@ QTSS_Error HTTPSession::execNetMsgCSGetRTSPLiveSessionsRESTful(const char* query
 		StrPtrLen* ackPtr = httpAck.GetCompleteHTTPHeader();
 		strncpy(respHeader, ackPtr->Ptr, ackPtr->Len);
 
-		// HTTPÏìÓ¦Content
+		// HTTPå“åº”Content
 		RTSPResponseStream *pOutputStream = GetOutputStream();
 		pOutputStream->Put(respHeader);
 		if (msgJson.Len > 0)
@@ -652,8 +652,8 @@ QTSS_Error HTTPSession::execNetMsgCSGetRTSPRecordSessionsRESTful(const char* que
 
 QTSS_Error HTTPSession::execNetMsgCSUsageAck()
 {
-	/*//ÔİÊ±×¢ÊÍµô£¬Êµ¼ÊÉÏÊÇĞèÒªÈÏÖ¤µÄ
-	if(!fAuthenticated)//Ã»ÓĞ½øĞĞÈÏÖ¤ÇëÇó
+	/*//æš‚æ—¶æ³¨é‡Šæ‰ï¼Œå®é™…ä¸Šæ˜¯éœ€è¦è®¤è¯çš„
+	if(!fAuthenticated)//æ²¡æœ‰è¿›è¡Œè®¤è¯è¯·æ±‚
 	return httpUnAuthorized;
 	*/
 
@@ -1219,11 +1219,21 @@ QTSS_Error HTTPSession::execNetMsgCSLiveDeviceStreamReqRESTful(const char * quer
 		}
 
 		const char* chChannel = parList.DoFindCGIValueForParam(EASY_TAG_CHANNEL);
-		if (chChannel)
+		if (!chChannel || string(chChannel).empty())
 		{
-			theChannelNum = stoi(chChannel);
+			theChannelNum = 1;
 		}
-
+		else
+		{
+			try
+			{
+				theChannelNum = stoi(chChannel);
+			}
+			catch (...)
+			{
+				theChannelNum = 1;
+			}
+		}
 		if (!chProtocol)
 		{
 			theErr = EASY_ERROR_CLIENT_BAD_REQUEST;
